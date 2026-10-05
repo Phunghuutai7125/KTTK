@@ -1,0 +1,14 @@
+D:\KienTrucThietKe\Tuan3\EDA\EDA\obj\Debug\net8.0\EDA.GeneratedMSBuildEditorConfig.editorconfig
+D:\KienTrucThietKe\Tuan3\EDA\EDA\obj\Debug\net8.0\EDA.AssemblyInfoInputs.cache
+D:\KienTrucThietKe\Tuan3\EDA\EDA\obj\Debug\net8.0\EDA.AssemblyInfo.cs
+D:\KienTrucThietKe\Tuan3\EDA\EDA\obj\Debug\net8.0\EDA.csproj.CoreCompileInputs.cache
+D:\KienTrucThietKe\Tuan3\EDA\EDA\bin\Debug\net8.0\EDA.exe
+D:\KienTrucThietKe\Tuan3\EDA\EDA\bin\Debug\net8.0\EDA.deps.json
+D:\KienTrucThietKe\Tuan3\EDA\EDA\bin\Debug\net8.0\EDA.runtimeconfig.json
+D:\KienTrucThietKe\Tuan3\EDA\EDA\bin\Debug\net8.0\EDA.dll
+D:\KienTrucThietKe\Tuan3\EDA\EDA\bin\Debug\net8.0\EDA.pdb
+D:\KienTrucThietKe\Tuan3\EDA\EDA\obj\Debug\net8.0\EDA.dll
+D:\KienTrucThietKe\Tuan3\EDA\EDA\obj\Debug\net8.0\refint\EDA.dll
+D:\KienTrucThietKe\Tuan3\EDA\EDA\obj\Debug\net8.0\EDA.pdb
+D:\KienTrucThietKe\Tuan3\EDA\EDA\obj\Debug\net8.0\EDA.genruntimeconfig.cache
+D:\KienTrucThietKe\Tuan3\EDA\EDA\obj\Debug\net8.0\ref\EDA.dll
