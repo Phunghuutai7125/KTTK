@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Todo App</title>
+<style>
+:root{--accent:#6ee7b7;--muted:#9aa5b1;--danger:#ff7b7b}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+  background:linear-gradient(180deg,#071024 0%,#071b2a 100%);color:#e6eef6;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;padding:24px}
+.wrap{width:100%;max-width:720px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+header h1{margin:0;font-size:1.6rem}
+.card{background:rgba(255,255,255,0.03);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+.input-row{display:flex;gap:8px}
+.input-row input[type="text"]{flex:1;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);
+  background:transparent;color:inherit;font-size:1rem}
+.input-row button{padding:10px 14px;border-radius:8px;border:none;background:var(--accent);color:#042023;font-weight:600;cursor:pointer}
+.controls{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:8px}
+.filters{display:flex;gap:8px}
+.filters button{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
+.filters button.active{border-color:var(--accent);color:var(--accent);font-weight:600}
+ul.todo-list{list-style:none;padding:0;margin:14px 0 0;max-height:60vh;overflow:auto}
+li.todo{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);margin-bottom:8px}
+.todo .title{flex:1;word-break:break-word}
+.todo.completed .title{text-decoration:line-through;opacity:.6}
+.icon-btn{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:6px 8px;border-radius:8px;cursor:pointer;color:inherit}
+.small{font-size:.9rem;color:var(--muted)}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+.error{color:var(--danger)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>Todo List</h1></header>
+  <section class="card">
+    <div class="input-row">
+      <input id="todo-input" type="text" placeholder="Thêm việc... (nhấn Enter để lưu)" />
+      <button id="add-btn">Thêm</button>
+    </div>
+    <div class="controls">
+      <div class="filters">
+        <button data-filter="all" class="active">Tất cả</button>
+        <button data-filter="active">Chưa xong</button>
+        <button data-filter="completed">Đã xong</button>
+      </div>
+      <div>
+        <span class="small" id="count">0 việc</span>
+        <button id="clear-completed" class="icon-btn" title="Xóa các việc đã xong">X</button>
+      </div>
+    </div>
+    <ul id="list" class="todo-list"></ul>
+    <div id="empty" class="empty" hidden>Không có công việc. Thêm việc mới ở trên.</div>
+    <div id="status" class="small" style="margin-top:8px"></div>
+  </section>
+</div>
+
+<script>
+const API_BASE = 'https://localhost:7057/api/v1/todos'; // đổi 7208 thành port thật của API
+
+const input   = document.getElementById('todo-input');
+const addBtn  = document.getElementById('add-btn');
+const listEl  = document.getElementById('list');
+const countEl = document.getElementById('count');
+const emptyEl = document.getElementById('empty');
+const clearBtn = document.getElementById('clear-completed');
+const filters = document.querySelectorAll('.filters button');
+const statusEl = document.getElementById('status');
+
+let todos = [];
+let filter = 'all';
+
+function setStatus(msg, isError = false) {
+  statusEl.textContent = msg || '';
+  statusEl.className = 'small' + (isError ? ' error' : '');
+}
+
+async function request(url, options = {}) {
+  const res = await fetch(url, {
+    cache: 'no-store',
+    headers: { 'Content-Type': 'application/json' },
+    ...options
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.status === 204 ? null : res.json();
+}
+
+async function loadTodos() {
+  try {
+    setStatus('Đang tải dữ liệu từ API...');
+    todos = await request(API_BASE);
+    setStatus('Đã đồng bộ với API.');
+  } catch (err) {
+    console.error(err);
+    setStatus('Không thể kết nối API: ' + err.message, true);
+  }
+  render();
+}
+
+async function addTodo(title) {
+  title = (title || '').trim();
+  if (!title) return;
+  try {
+    const created = await request(API_BASE, {
+      method: 'POST',
+      body: JSON.stringify({ title, isCompleted: false })
+    });
+    todos.push(created);
+    input.value = '';
+    setStatus('Đã thêm.');
+  } catch (err) {
+    setStatus('Thêm thất bại: ' + err.message, true);
+  }
+  render();
+}
+
+async function updateTodo(id, changes) {
+  const current = todos.find(t => t.id === id);
+  if (!current) return;
+  const payload = {
+    title: changes.title ?? current.title,
+    isCompleted: changes.isCompleted ?? !!current.isCompleted
+  };
+  try {
+    const updated = await request(`${API_BASE}/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    });
+    todos = todos.map(t => t.id === id ? updated : t);
+    setStatus('Đã cập nhật.');
+  } catch (err) {
+    setStatus('Cập nhật thất bại: ' + err.message, true);
+  }
+  render();
+}
+
+const toggleTodo = id => {
+  const t = todos.find(x => x.id === id);
+  if (t) updateTodo(id, { isCompleted: !t.isCompleted });
+};
+
+async function editTodo(id, newTitle) {
+  const t = todos.find(x => x.id === id);
+  if (!t || newTitle === t.title) return;
+  if (newTitle === '') { await deleteTodo(id); return; }
+  await updateTodo(id, { title: newTitle });
+}
+
+async function deleteTodo(id) {
+  try {
+    await request(`${API_BASE}/${id}`, { method: 'DELETE' });
+    todos = todos.filter(t => t.id !== id);
+    setStatus('Đã xóa.');
+  } catch (err) {
+    setStatus('Xóa thất bại: ' + err.message, true);
+  }
+  render();
+}
+
+async function clearCompleted() {
+  const ids = todos.filter(t => t.isCompleted).map(t => t.id);
+  if (ids.length === 0) return;
+  try {
+    await Promise.all(ids.map(id => request(`${API_BASE}/${id}`, { method: 'DELETE' })));
+    todos = todos.filter(t => !t.isCompleted);
+    setStatus(`Đã xóa ${ids.length} việc đã xong.`);
+  } catch (err) {
+    setStatus('Xóa thất bại: ' + err.message, true);
+    await loadTodos();
+    return;
+  }
+  render();
+}
+
+function render() {
+  const visible = todos.filter(t =>
+    filter === 'all' ? true : filter === 'active' ? !t.isCompleted : !!t.isCompleted);
+
+  listEl.innerHTML = '';
+  emptyEl.hidden = visible.length > 0;
+
+  visible.forEach(t => {
+    const li = document.createElement('li');
+    li.className = 'todo' + (t.isCompleted ? ' completed' : '');
+
+    const chk = document.createElement('input');
+    chk.type = 'checkbox';
+    chk.checked = !!t.isCompleted;
+    chk.addEventListener('change', () => toggleTodo(t.id));
+
+    const title = document.createElement('div');
+    title.className = 'title';
+    title.textContent = t.title;
+    title.contentEditable = true;
+    title.spellcheck = false;
+    title.addEventListener('blur', () => editTodo(t.id, title.textContent.trim()));
+    title.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); title.blur(); }
+    });
+
+    const del = document.createElement('button');
+    del.className = 'icon-btn';
+    del.title = 'Xóa';
+    del.textContent = '🗑';
+    del.addEventListener('click', () => deleteTodo(t.id));
+
+    li.append(chk, title, del);
+    listEl.appendChild(li);
+  });
+
+  countEl.textContent = todos.filter(t => !t.isCompleted).length + ' việc';
+}
+
+addBtn.addEventListener('click', () => addTodo(input.value));
+input.addEventListener('keydown', e => { if (e.key === 'Enter') addTodo(input.value); });
+clearBtn.addEventListener('click', clearCompleted);
+filters.forEach(b => b.addEventListener('click', () => {
+  filters.forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  filter = b.dataset.filter;
+  render();
+}));
+
+loadTodos();
+</script>
+</body>
+</html>
