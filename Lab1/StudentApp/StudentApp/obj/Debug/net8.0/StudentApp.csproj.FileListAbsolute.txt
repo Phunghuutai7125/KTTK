@@ -1,0 +1,14 @@
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\bin\Debug\net8.0\StudentApp.exe
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\bin\Debug\net8.0\StudentApp.deps.json
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\bin\Debug\net8.0\StudentApp.runtimeconfig.json
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\bin\Debug\net8.0\StudentApp.dll
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\bin\Debug\net8.0\StudentApp.pdb
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\obj\Debug\net8.0\StudentApp.GeneratedMSBuildEditorConfig.editorconfig
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\obj\Debug\net8.0\StudentApp.AssemblyInfoInputs.cache
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\obj\Debug\net8.0\StudentApp.AssemblyInfo.cs
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\obj\Debug\net8.0\StudentApp.csproj.CoreCompileInputs.cache
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\obj\Debug\net8.0\StudentApp.dll
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\obj\Debug\net8.0\refint\StudentApp.dll
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\obj\Debug\net8.0\StudentApp.pdb
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\obj\Debug\net8.0\StudentApp.genruntimeconfig.cache
+D:\KienTrucThietKe\Tuan1\StudentApp\StudentApp\obj\Debug\net8.0\ref\StudentApp.dll
